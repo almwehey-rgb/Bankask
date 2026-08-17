@@ -23,6 +23,7 @@ const progressFill = document.getElementById("progress-fill");
 const questionText = document.getElementById("question-text");
 const optionsContainer = document.getElementById("options-container");
 const nextBtn = document.getElementById("next-btn");
+const skipBtn = document.getElementById("skip-btn");
 
 const resultEmoji = document.getElementById("result-emoji");
 const resultTitle = document.getElementById("result-title");
@@ -34,8 +35,9 @@ const homeBtn = document.getElementById("home-btn");
 let state = {
   level: null,
   playerName: "",
-  questions: [],
-  index: 0,
+  queue: [],
+  total: 0,
+  answeredCount: 0,
   score: 0,
   correctCount: 0,
   answered: false,
@@ -121,8 +123,9 @@ function startLevel(level) {
   state = {
     level,
     playerName: name,
-    questions: shuffle(bank.questions).slice(0, QUESTIONS_PER_QUIZ),
-    index: 0,
+    queue: shuffle(bank.questions).slice(0, QUESTIONS_PER_QUIZ),
+    total: QUESTIONS_PER_QUIZ,
+    answeredCount: 0,
     score: 0,
     correctCount: 0,
     answered: false,
@@ -133,19 +136,20 @@ function startLevel(level) {
 
 function renderQuestion() {
   const bank = QUESTION_BANK[state.level];
-  const q = state.questions[state.index];
+  const q = state.queue[0];
 
   quizBadge.textContent = bank.label;
   quizBadge.className = "badge " + state.level;
-  quizProgress.textContent = `السؤال ${state.index + 1} من ${state.questions.length}`;
+  quizProgress.textContent = `السؤال ${state.answeredCount + 1} من ${state.total}`;
   quizScore.textContent = `النقاط: ${state.score}`;
-  progressFill.style.width = `${(state.index / state.questions.length) * 100}%`;
+  progressFill.style.width = `${(state.answeredCount / state.total) * 100}%`;
 
   questionText.textContent = q.q;
   optionsContainer.innerHTML = "";
   state.answered = false;
   nextBtn.disabled = true;
-  nextBtn.textContent = state.index === state.questions.length - 1 ? "عرض النتيجة" : "التالي";
+  nextBtn.textContent = state.answeredCount === state.total - 1 ? "عرض النتيجة" : "التالي";
+  skipBtn.disabled = state.queue.length <= 1;
 
   q.options.forEach((opt, i) => {
     const btn = document.createElement("button");
@@ -159,9 +163,10 @@ function renderQuestion() {
 function selectAnswer(selectedIndex, btnEl) {
   if (state.answered) return;
   state.answered = true;
+  skipBtn.disabled = true;
 
   const bank = QUESTION_BANK[state.level];
-  const q = state.questions[state.index];
+  const q = state.queue[0];
   const buttons = optionsContainer.querySelectorAll(".option-btn");
 
   buttons.forEach((b, i) => {
@@ -176,12 +181,21 @@ function selectAnswer(selectedIndex, btnEl) {
     quizScore.textContent = `النقاط: ${state.score}`;
   }
 
+  state.answeredCount += 1;
+  state.queue.shift();
   nextBtn.disabled = false;
+  nextBtn.textContent = state.queue.length === 0 ? "عرض النتيجة" : "التالي";
 }
 
+skipBtn.addEventListener("click", () => {
+  if (state.answered || state.queue.length <= 1) return;
+  const q = state.queue.shift();
+  state.queue.push(q);
+  renderQuestion();
+});
+
 nextBtn.addEventListener("click", () => {
-  if (state.index < state.questions.length - 1) {
-    state.index += 1;
+  if (state.queue.length > 0) {
     renderQuestion();
   } else {
     finishQuiz();
@@ -190,7 +204,7 @@ nextBtn.addEventListener("click", () => {
 
 function finishQuiz() {
   progressFill.style.width = "100%";
-  const total = state.questions.length;
+  const total = state.total;
   const bank = QUESTION_BANK[state.level];
   const maxScore = total * bank.points;
   const percent = Math.round((state.correctCount / total) * 100);

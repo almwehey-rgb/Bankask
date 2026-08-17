@@ -236,6 +236,35 @@ body {
   color: var(--danger);
 }
 
+.quiz-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.skip-btn {
+  flex: 0 0 auto;
+  padding: 16px 22px;
+  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s ease, color 0.15s ease, opacity 0.15s ease;
+}
+
+.skip-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+}
+
+.skip-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
 .next-btn, .primary-btn {
   width: 100%;
   padding: 16px;
@@ -248,6 +277,10 @@ body {
   cursor: pointer;
   font-family: inherit;
   transition: opacity 0.15s ease;
+}
+
+.next-btn {
+  flex: 1;
 }
 
 .next-btn:disabled {
