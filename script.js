@@ -40,11 +40,13 @@ function shuffle(arr) {
   return copy;
 }
 
+const QUESTIONS_PER_QUIZ = 10;
+
 function startLevel(level) {
   const bank = QUESTION_BANK[level];
   state = {
     level,
-    questions: shuffle(bank.questions),
+    questions: shuffle(bank.questions).slice(0, QUESTIONS_PER_QUIZ),
     index: 0,
     score: 0,
     correctCount: 0,
