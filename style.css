@@ -9,6 +9,7 @@
   --easy: #34d399;
   --medium: #fbbf24;
   --hard: #f87171;
+  --sports: #38bdf8;
   --danger: #f87171;
   --success: #34d399;
   --radius: 16px;
@@ -127,6 +128,7 @@ body {
 .level-btn.easy { border-color: var(--easy); }
 .level-btn.medium { border-color: var(--medium); }
 .level-btn.hard { border-color: var(--hard); }
+.level-btn.sports { border-color: var(--sports); }
 
 .level-btn .dot {
   width: 12px;
@@ -136,6 +138,7 @@ body {
 .level-btn.easy .dot { background: var(--easy); }
 .level-btn.medium .dot { background: var(--medium); }
 .level-btn.hard .dot { background: var(--hard); }
+.level-btn.sports .dot { background: var(--sports); }
 
 .level-btn .meta {
   color: var(--text-dim);
@@ -162,6 +165,7 @@ body {
 .badge.easy { background: rgba(52, 211, 153, 0.15); color: var(--easy); }
 .badge.medium { background: rgba(251, 191, 36, 0.15); color: var(--medium); }
 .badge.hard { background: rgba(248, 113, 113, 0.15); color: var(--hard); }
+.badge.sports { background: rgba(56, 189, 248, 0.15); color: var(--sports); }
 
 .progress-text {
   color: var(--text-dim);
@@ -408,3 +412,4 @@ body {
 .log-level.easy { background: rgba(52, 211, 153, 0.15); color: var(--easy); }
 .log-level.medium { background: rgba(251, 191, 36, 0.15); color: var(--medium); }
 .log-level.hard { background: rgba(248, 113, 113, 0.15); color: var(--hard); }
+.log-level.sports { background: rgba(56, 189, 248, 0.15); color: var(--sports); }
