@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>بنك الأسئلة</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <!-- شاشة اختيار المستوى -->
+    <div class="card" id="screen-start">
+      <h1 class="title">بنك الأسئلة</h1>
+      <p class="subtitle">اختر مستوى الصعوبة وابدأ الاختبار</p>
+      <div class="levels">
+        <button class="level-btn easy" data-level="easy">
+          <span><span class="dot"></span> سهل</span>
+          <span class="meta">10 أسئلة · 10 نقاط لكل سؤال</span>
+        </button>
+        <button class="level-btn medium" data-level="medium">
+          <span><span class="dot"></span> متوسط</span>
+          <span class="meta">10 أسئلة · 20 نقطة لكل سؤال</span>
+        </button>
+        <button class="level-btn hard" data-level="hard">
+          <span><span class="dot"></span> صعب</span>
+          <span class="meta">10 أسئلة · 30 نقطة لكل سؤال</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- شاشة الأسئلة -->
+    <div class="card hidden" id="screen-quiz">
+      <div class="quiz-header">
+        <span class="badge" id="quiz-badge"></span>
+        <span class="progress-text" id="quiz-progress"></span>
+        <span class="score-text" id="quiz-score"></span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+      <div class="question" id="question-text"></div>
+      <div class="options" id="options-container"></div>
+      <button class="next-btn" id="next-btn" disabled>التالي</button>
+    </div>
+
+    <!-- شاشة النتيجة -->
+    <div class="card hidden" id="screen-result">
+      <div class="result-emoji" id="result-emoji">🎉</div>
+      <div class="result-title" id="result-title">أحسنت!</div>
+      <div class="result-score" id="result-score">0</div>
+      <div class="result-sub" id="result-sub"></div>
+      <button class="primary-btn" id="retry-btn">إعادة نفس المستوى</button>
+      <button class="secondary-btn" id="home-btn">اختيار مستوى آخر</button>
+    </div>
+  </div>
+
+  <script src="questions.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
