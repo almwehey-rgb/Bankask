@@ -11,7 +11,12 @@
     <!-- شاشة اختيار المستوى -->
     <div class="card" id="screen-start">
       <h1 class="title">بنك الأسئلة</h1>
-      <p class="subtitle">اختر مستوى الصعوبة وابدأ الاختبار</p>
+      <p class="subtitle">اكتب اسمك، اختر مستوى الصعوبة، وابدأ الاختبار</p>
+
+      <label class="field-label" for="player-name">الاسم</label>
+      <input type="text" id="player-name" class="name-input" placeholder="اكتب اسمك هنا" maxlength="40" />
+      <p class="field-error hidden" id="name-error">اكتب اسمك قبل ما تبدأ</p>
+
       <div class="levels">
         <button class="level-btn easy" data-level="easy">
           <span><span class="dot"></span> سهل</span>
@@ -26,6 +31,32 @@
           <span class="meta">10 أسئلة · 30 نقطة لكل سؤال</span>
         </button>
       </div>
+
+      <button class="secondary-btn" id="show-log-btn">عرض سجل النتائج</button>
+    </div>
+
+    <!-- شاشة سجل النتائج -->
+    <div class="card hidden" id="screen-log">
+      <div class="log-header">
+        <h1 class="title">سجل النتائج</h1>
+        <button class="icon-btn" id="clear-log-btn" title="مسح السجل">مسح الكل</button>
+      </div>
+      <p class="subtitle" id="log-empty">لا توجد نتائج محفوظة بعد. أكمل اختبارًا وبيظهر هنا.</p>
+      <div class="log-table-wrap">
+        <table class="log-table" id="log-table">
+          <thead>
+            <tr>
+              <th>الاسم</th>
+              <th>المستوى</th>
+              <th>النتيجة</th>
+              <th>النسبة</th>
+              <th>التاريخ</th>
+            </tr>
+          </thead>
+          <tbody id="log-body"></tbody>
+        </table>
+      </div>
+      <button class="secondary-btn" id="log-back-btn">رجوع</button>
     </div>
 
     <!-- شاشة الأسئلة -->
@@ -51,6 +82,7 @@
       <div class="result-sub" id="result-sub"></div>
       <button class="primary-btn" id="retry-btn">إعادة نفس المستوى</button>
       <button class="secondary-btn" id="home-btn">اختيار مستوى آخر</button>
+      <button class="secondary-btn" id="result-log-btn">عرض سجل النتائج</button>
     </div>
   </div>
 

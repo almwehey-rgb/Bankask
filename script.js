@@ -1,6 +1,20 @@
+const STORAGE_RESULTS_KEY = "bankask_results";
+const STORAGE_NAME_KEY = "bankask_player_name";
+
 const screenStart = document.getElementById("screen-start");
 const screenQuiz = document.getElementById("screen-quiz");
 const screenResult = document.getElementById("screen-result");
+const screenLog = document.getElementById("screen-log");
+
+const playerNameInput = document.getElementById("player-name");
+const nameError = document.getElementById("name-error");
+const showLogBtn = document.getElementById("show-log-btn");
+const resultLogBtn = document.getElementById("result-log-btn");
+const logBackBtn = document.getElementById("log-back-btn");
+const clearLogBtn = document.getElementById("clear-log-btn");
+const logTable = document.getElementById("log-table");
+const logBody = document.getElementById("log-body");
+const logEmpty = document.getElementById("log-empty");
 
 const quizBadge = document.getElementById("quiz-badge");
 const quizProgress = document.getElementById("quiz-progress");
@@ -19,6 +33,7 @@ const homeBtn = document.getElementById("home-btn");
 
 let state = {
   level: null,
+  playerName: "",
   questions: [],
   index: 0,
   score: 0,
@@ -26,8 +41,10 @@ let state = {
   answered: false,
 };
 
+playerNameInput.value = localStorage.getItem(STORAGE_NAME_KEY) || "";
+
 function showScreen(screen) {
-  [screenStart, screenQuiz, screenResult].forEach((s) => s.classList.add("hidden"));
+  [screenStart, screenQuiz, screenResult, screenLog].forEach((s) => s.classList.add("hidden"));
   screen.classList.remove("hidden");
 }
 
@@ -40,12 +57,70 @@ function shuffle(arr) {
   return copy;
 }
 
+function loadResults() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_RESULTS_KEY)) || [];
+  } catch {
+    return [];
+  }
+}
+
+function saveResult(entry) {
+  const results = loadResults();
+  results.push(entry);
+  localStorage.setItem(STORAGE_RESULTS_KEY, JSON.stringify(results));
+}
+
+function renderLog() {
+  const results = loadResults().slice().reverse();
+
+  if (results.length === 0) {
+    logEmpty.classList.remove("hidden");
+    logTable.classList.add("hidden");
+    return;
+  }
+
+  logEmpty.classList.add("hidden");
+  logTable.classList.remove("hidden");
+  logBody.innerHTML = "";
+
+  results.forEach((r) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${escapeHtml(r.name)}</td>
+      <td><span class="log-level ${r.level}">${r.levelLabel}</span></td>
+      <td>${r.score} / ${r.maxScore}</td>
+      <td>${r.percent}%</td>
+      <td>${r.date}</td>
+    `;
+    logBody.appendChild(tr);
+  });
+}
+
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
+}
+
 const QUESTIONS_PER_QUIZ = 10;
 
 function startLevel(level) {
+  const name = playerNameInput.value.trim();
+  if (!name) {
+    playerNameInput.classList.add("invalid");
+    nameError.classList.remove("hidden");
+    playerNameInput.focus();
+    return;
+  }
+  playerNameInput.classList.remove("invalid");
+  nameError.classList.add("hidden");
+  localStorage.setItem(STORAGE_NAME_KEY, name);
+
   const bank = QUESTION_BANK[level];
   state = {
     level,
+    playerName: name,
     questions: shuffle(bank.questions).slice(0, QUESTIONS_PER_QUIZ),
     index: 0,
     score: 0,
@@ -132,11 +207,47 @@ function finishQuiz() {
   resultScore.textContent = `${state.score} / ${maxScore}`;
   resultSub.textContent = `أجبت بشكل صحيح على ${state.correctCount} من ${total} سؤال (${percent}%) - مستوى ${bank.label}`;
 
+  saveResult({
+    name: state.playerName,
+    level: state.level,
+    levelLabel: bank.label,
+    score: state.score,
+    maxScore,
+    correctCount: state.correctCount,
+    total,
+    percent,
+    date: new Date().toLocaleString("ar-u-ca-gregory-nu-latn", { dateStyle: "medium", timeStyle: "short" }),
+  });
+
   showScreen(screenResult);
 }
 
 retryBtn.addEventListener("click", () => startLevel(state.level));
 homeBtn.addEventListener("click", () => showScreen(screenStart));
+
+showLogBtn.addEventListener("click", () => {
+  renderLog();
+  showScreen(screenLog);
+});
+
+resultLogBtn.addEventListener("click", () => {
+  renderLog();
+  showScreen(screenLog);
+});
+
+logBackBtn.addEventListener("click", () => showScreen(screenStart));
+
+clearLogBtn.addEventListener("click", () => {
+  localStorage.removeItem(STORAGE_RESULTS_KEY);
+  renderLog();
+});
+
+playerNameInput.addEventListener("input", () => {
+  if (playerNameInput.value.trim()) {
+    playerNameInput.classList.remove("invalid");
+    nameError.classList.add("hidden");
+  }
+});
 
 document.querySelectorAll(".level-btn").forEach((btn) => {
   btn.addEventListener("click", () => startLevel(btn.dataset.level));
